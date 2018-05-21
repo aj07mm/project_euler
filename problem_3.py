@@ -1,7 +1,8 @@
 import unittest
 import sys
+import functools
 from itertools import combinations
-
+from operator import mul
 
 def is_prime(n):
     number_of_divisions = 0
@@ -10,19 +11,33 @@ def is_prime(n):
             number_of_divisions += 1
     
     return number_of_divisions == 2
+
+
+def get_primes(n):
+    primes = []
+    for m in range(0, n+1, 2):
+        if is_prime(m):
+            primes.append(m)
+    return primes
+
         
 
 def largest_prime_factor(n):
     primes = []
-    for m in range(1, n+1):
-        if is_prime(m):
-            primes.append(m)
+    res = []
 
-    #res = []
-    #for n1 in combinations(primes, 4):
-    #    if n1*n2*n3*n4 == n:
-    #        res.append(n1, n2, n3, n4)
-    return primes
+    primes = get_primes(n)
+
+    print("get all possible combinations")
+    # get all possible combinations with length being 2 until len(str(n))+1
+    for m in range(2, len(str(n))+1):
+        for combination in combinations(primes, m):
+            print(combination)
+            # if the product of all numbers is n, give me the max of that combination
+            if functools.reduce(mul, combination, 1) == n:
+                return max(combination)
+
+    return None
     
 
 class TestIsPrime(unittest.TestCase):
@@ -48,4 +63,6 @@ class TestLargestPrimeFactor(unittest.TestCase):
         self.assertEqual(largest_prime_factor(13195), 29)
 
 if __name__ == '__main__':
-    unittest.main()
+    #unittest.main()
+    largest_prime_factor(600851475143)
+
