@@ -9,7 +9,7 @@ def is_prime(n):
     for m in range(1, n+1):
         if n % m == 0:
             number_of_divisions += 1
-    
+
     return number_of_divisions == 2
 
 
@@ -18,20 +18,18 @@ def get_primes(n):
     for m in range(0, n+1, 2):
         if is_prime(m):
             primes.append(m)
-    return primes
 
+    yield primes
         
 
 def largest_prime_factor(n):
     primes = []
     res = []
 
-    primes = get_primes(n)
-
     print("get all possible combinations")
     # get all possible combinations with length being 2 until len(str(n))+1
     for m in range(2, len(str(n))+1):
-        for combination in combinations(primes, m):
+        for combination in combinations(get_primes(n), m):
             print(combination)
             # if the product of all numbers is n, give me the max of that combination
             if functools.reduce(mul, combination, 1) == n:
@@ -62,7 +60,7 @@ class TestLargestPrimeFactor(unittest.TestCase):
     def test_1_1(self):
         self.assertEqual(largest_prime_factor(13195), 29)
 
+
 if __name__ == '__main__':
     #unittest.main()
-    largest_prime_factor(600851475143)
-
+    print(largest_prime_factor(600851475143))
