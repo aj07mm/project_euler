@@ -1,6 +1,5 @@
 # https://projecteuler.net/problem=8
 import math
-from itertools import permutations, combinations
 import unittest
 
 NUMBER = """
@@ -27,20 +26,40 @@ NUMBER = """
 """.replace('\n', '')
 
 
+def chunk(seq, chunk_size):
+    chunks = []
+    first, last = 0, chunk_size
+    while last < len(seq):
+        chunks.append(seq[first:last])
+        first = last
+        last += chunk_size
+    return chunks
+
 def largest_product_in_series(n, serie_of_m):
     parsed_number = [int(pn) for pn in NUMBER]
-    sequence_sum = 0
-    for seq in combinations(parsed_number, serie_of_m):
-        seq_sum = sum(seq)
-        if seq_sum > sequence_sum:
-            sequence_sum = seq_sum
-    return sequence_sum
+    largest_product = 0
+
+    while len(parsed_number) > serie_of_m:
+        parsed_number_chunked = chunk(parsed_number, serie_of_m)
+        products = map(
+            lambda seq_chunked:
+                reduce(
+                    lambda acc, x: acc*x,seq_chunked), parsed_number_chunked)
+        max_products = max(products)
+        if max_products > largest_product:
+            largest_product = max_products
+        parsed_number.pop(0)
+
+    return largest_product
 
 
 class TestSmallestMultiple(unittest.TestCase):
 
     def test_1_1(self):
         self.assertEqual(largest_product_in_series(NUMBER, 4), 5832)
+
+    def test_1_2(self):
+        self.assertEqual(largest_product_in_series(NUMBER, 13), 5832)
 
 
 if __name__ == '__main__':
