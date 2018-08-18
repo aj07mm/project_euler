@@ -1,9 +1,11 @@
 # https://projecteuler.net/problem=7
+import operator
 import math
 import unittest
+from functools import reduce
 
 
-GRID = """
+GRID_RAW = """
 08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
 49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
 81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65
@@ -24,22 +26,85 @@ GRID = """
 20 69 36 41 72 30 23 88 34 62 99 69 82 67 59 85 74 04 36 16
 20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48
-""".replace("\n", "").split(" ")
+"""
+GRID = GRID_RAW.replace("\n", " ").split(" ")
+GRID = [n for n in GRID if n != ""]
+GRID = [int(n) for n in GRID]
 
+def transpose(grid):
+    return list(zip(*grid))
 
-def largest_product_in_grid(grid, n_adjacent):
-    # up
-    # down
-    # left
-    # right
-    # diagonal
-    return grid
+def rows_as_rows(grid):
+    lines = []
+    aux_inc = 0
+    total_rows = 20 * 20
+    while aux_inc != total_rows:
+        lines.append(grid[aux_inc:aux_inc+20])
+        aux_inc += 20
+    return lines
+
+def columns_as_rows(grid):
+    lines = []
+    aux_inc = 0
+    total_rows = 20
+    while aux_inc != total_rows:
+        lines.append(grid[::20])
+        aux_inc += 1
+    return lines
+
+def diagonal_as_rows(rows):
+    lines = []
+    diagonals = []
+    aux_inc = 0
+    aux_cols = 0
+    while aux_cols != 20:
+        for row in rows:
+            if aux_inc <= len(row)-1:
+                lines.append(row[aux_inc])
+            aux_inc += 1
+        diagonals.append(lines)
+        lines = []
+        aux_cols += 1
+        aux_inc = aux_cols
+    return diagonals
+
+def diagonals_as_rows(grid):
+    rows = rows_as_rows(grid)
+    # from left to right
+    dig = diagonal_as_rows(rows)
+    dig_t = diagonal_as_rows(transpose(rows))   
+    # from right to left
+    dig_2 = diagonal_as_rows([row for row in rows[::-1]])
+    dig_t_2 = diagonal_as_rows(transpose([row for row in rows[::-1]]))   
+    return dig + dig_t + dig_2 + dig_t_2
+
+def chunk(seq):
+    chunks = []
+    for i in range(len(seq)-3):
+        chunks.append(seq[i:i+4])
+    return chunks
+
+def largest_product_in_grid(grid):
+    sums = []
+    for row in rows_as_rows(grid):
+        for chunks in chunk(row):
+            print(chunks)
+            sums.append(reduce(operator.mul, chunks, 1))
+    for row in columns_as_rows(grid):
+        for chunks in chunk(row):
+            print(chunks)
+            sums.append(reduce(operator.mul, chunks, 1))
+    for row in diagonals_as_rows(grid):
+        for chunks in chunk(row):
+            print(chunks)
+            sums.append(reduce(operator.mul, chunks, 1))
+    return max(sums)
 
 
 class TestSmallestMultiple(unittest.TestCase):
 
     def test_1_1(self):
-        self.assertEqual(largest_product_in_grid(GRID, 4), 1788696)
+        self.assertEqual(largest_product_in_grid(GRID), 70600674)
 
 
 if __name__ == '__main__':
