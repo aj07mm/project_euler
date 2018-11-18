@@ -13,10 +13,10 @@
 def build_sequence(n, sequence):
     if n == 1:
         return sequence
-        
+
     if sequence == []:
         sequence.append(n)
-        
+
     if n % 2 == 0:
         n = n / 2
     else:
@@ -24,8 +24,8 @@ def build_sequence(n, sequence):
 
     sequence.append(n)
     return build_sequence(n, sequence)
-    
-    
+
+
 def get_largest_sequence_number_in_sequences(sequences):
     longest_sequence = []
     for sequence in sequences:
@@ -38,8 +38,7 @@ def get_all_sequences(n_range):
     for n in n_range:
         list_of_sequences.append(build_sequence(n, []))
     return list_of_sequences
-    
+
 if __name__ == "__main__":
-    # n = get_largest_sequence_number_in_sequences(get_all_sequences(range(13, 14))) # 13
     n = get_largest_sequence_number_in_sequences(get_all_sequences(range(1, 1000000)))
     print(n) # 837799
