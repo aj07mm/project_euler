@@ -17,8 +17,6 @@ def get_divisors(n):
     return n_divisors
 
 
-
-
 def get_over_divisor(limit):
     n = 0
     n_divisors = 0
@@ -27,7 +25,6 @@ def get_over_divisor(limit):
         n += 1
         previous_ns.append(n)
         current_n = sum(previous_ns)
-        print(current_n)
         n_divisors = get_divisors(current_n)
         if n_divisors > limit:
             return current_n
@@ -38,8 +35,7 @@ class TestSummationOfPrimes(unittest.TestCase):
         self.assertGreater(get_divisors(28), 5)
 
     def test_1_2(self):
-        get_over_divisor(500)
-        #self.assertGreater(get_divisors(28), 500)
+        self.assertGreater(get_over_divisor(500), 76576500)
 
 
 if __name__ == '__main__':
